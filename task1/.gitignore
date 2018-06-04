@@ -1,0 +1,8 @@
+NCEdu.iml
+*.xml
+out/production/NCEdu/NCEdu/DataGenerator.class
+out/production/NCEdu/NCEdu/intdata/IntegerChecker.class
+out/production/NCEdu/NCEdu/intdata/IntegerQuickSort.class
+out/production/NCEdu/NCEdu/intdata/IntegerDataGenerator.class
+out/production/NCEdu/NCEdu/SortedArrayChecker.class
+out/production/NCEdu/NCEdu/QuickSort.class
