@@ -4,11 +4,21 @@ import java.io.*;
 
 public class FileUtils {
     /**
+     *
+     * @param sourcePath
+     * @return
+     */
+    static String getFileName(String sourcePath){
+        String[] parts = sourcePath.split("\\\\");
+        return parts[parts.length-1];
+    }
+    /**
      * create directory in destination directory
      * @param destinationPath
      * @param directoryName
      * @return final path to new  directory
      */
+
     static String createDirectory(String destinationPath, String directoryName) {
         String resultPath = destinationPath+"\\"+directoryName;
         File newFile = new File(resultPath);
@@ -25,17 +35,13 @@ public class FileUtils {
      * create a copy of file in destination directory
      * @param sourcePath
      * @param destinationPath
-     * @param sourceFile
      */
-    static void copyFile(String sourcePath, String destinationPath, String sourceFile){
+    static void copyFile(String sourcePath, String destinationPath){
+        String sourceFile = getFileName(sourcePath);
         InputStream inputStream = null;
         OutputStream outputStream = null;
-        //String sourcePath = "D:\\Ann";
-        //String destinationPath = "D:\\Ann\\testFolder";
-        //String fileName = "test.txt";
-
         try {
-            inputStream = new FileInputStream(sourcePath + "\\" + sourceFile);
+            inputStream = new FileInputStream(sourcePath);
             File newFile = new File(destinationPath+"\\"+sourceFile);
             if (newFile.exists()){
                 newFile = new File(destinationPath+"\\copy."+sourceFile);
@@ -63,10 +69,11 @@ public class FileUtils {
      * do not work between different disks
      * @param sourcePath
      * @param destinationPath
-     * @param fileName
+     *
      */
-    static void changePath( String sourcePath, String destinationPath, String fileName){
-        File sourceFile = new File(sourcePath+"\\"+fileName);
+    static void changePath( String sourcePath, String destinationPath){
+        String fileName = getFileName(sourcePath);
+        File sourceFile = new File(sourcePath);
         File destinationFile = new File(destinationPath+"\\"+fileName);
         if(!destinationFile.exists()){
             sourceFile.renameTo(destinationFile);
@@ -79,11 +86,28 @@ public class FileUtils {
     /**
      * delete empty folders and files
      * @param sourcePath
-     * @param fileName
      */
-    static void deleteFile( String sourcePath,  String fileName){
+    static void deleteFile( String sourcePath){
+        String fileName = getFileName(sourcePath);
         File sourceFile = new File(sourcePath+"\\"+fileName);
         sourceFile.delete();
     }
 
+    static PathTreeNode fillFileTree(PathTreeNode root){ //File rootFile){
+        //PathTreeNode root = new PathTreeNode(rootFile.getPath());
+        File rootFile = new File(root.getFullPath());
+        String[] files = rootFile.list();
+        if (files!= null) {
+            for (int i = 0; i < files.length; i++) {
+                PathTreeNode newNode = root.addNode(files[i]);
+                String str = root.getFullPath()+"\\"+files[i];
+                File newFile = new File(str);
+
+                if(newFile.isDirectory()){
+                    fillFileTree(newNode);
+                }
+            }
+        }
+        return root;
+    }
 }

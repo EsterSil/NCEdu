@@ -1,31 +1,29 @@
 package filemanager;
 
-import com.sun.org.apache.xerces.internal.xs.StringList;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
-public class FileTreeNode implements TreeNode<String> {
+public class PathTreeNode implements TreeNode<String> {
     private String path = "";
     private TreeNode<String> parent = null;
     private List<TreeNode<String>> children = new ArrayList<TreeNode<String>>();
 
-    public FileTreeNode(String data) {
+    public PathTreeNode(String data) {
         this.path = data;
     }
 
-    public TreeNode<String> addNode(String data) {
-        FileTreeNode node = new FileTreeNode(data);
+    public PathTreeNode addNode(String data) {
+        PathTreeNode node = new PathTreeNode(data);
         this.children.add(node);
+        node.setParent(this);
         return node;
     }
 
-    public void addNode(TreeNode<String> node) {
+    public TreeNode<String> addNode(TreeNode<String> node) {
         this.children.add(node);
         node.setParent(this);
+        return node;
     }
 
     public void addChildren(Collection<TreeNode<String>> children) {
@@ -42,7 +40,7 @@ public class FileTreeNode implements TreeNode<String> {
         TreeNode<String> parent = child.getParent();
         parent.getChildren().remove(child);
         child.setParent(null);
-        if(!child.isLeaf()){
+        if (!child.isLeaf()) {
             parent.getChildren().addAll(child.getChildren());
         }
         return true;
@@ -58,7 +56,7 @@ public class FileTreeNode implements TreeNode<String> {
         return children;
     }
 
-    public String getData() {
+    public String getPath() {
         return this.path;
     }
 
@@ -68,16 +66,17 @@ public class FileTreeNode implements TreeNode<String> {
 
     public String getFullPath() {
         String path = "";
-        if (this.getData() != null) {
-            path = this.getData();
+
+        if (this.getPath() != null) {
+            path = this.getPath();
         }
-        TreeNode currentNode = this.getParent();
-        while (currentNode.getParent() != null) {
-            if (currentNode.getData() != null) {
-                path = currentNode.getData() + "\\" + path;
+        TreeNode currentNode = this;
+        do {
+            if (currentNode.getParent() != null) {
+                path = currentNode.getParent().getPath() + "\\" + path;
             }
             currentNode = currentNode.getParent();
-        }
+        }while (currentNode != null);
         return path;
     }
 
@@ -102,12 +101,12 @@ public class FileTreeNode implements TreeNode<String> {
             List<TreeNode<String>> nextLvl = new ArrayList<TreeNode<String>>();
             while (currentLvl.size() != 0) {
                 for (TreeNode<String> child : currentLvl) {
-                    if ((child.getData() != null) && (path != null)) {
-                        if (child.getData().equals(path)) {
+                    if ((child.getPath() != null) && (path != null)) {
+                        if (child.getPath().equals(path)) {
                             return child;
                         }
                     } else {
-                        if ((child.getData() == null) && (path == null)) {
+                        if ((child.getPath() == null) && (path == null)) {
                             return child;
                         }
                     }

@@ -28,7 +28,7 @@ public interface TreeNode <T> {
     /**
      * Adds the given node to this <code>TreeNode</code> and sets this as the parent to it.
      */
-    void addNode(TreeNode<T> node);
+    TreeNode<T> addNode(TreeNode<T> node);
 
     /**
      * Add given collection of children to this <code>TreeNode</code>
@@ -52,7 +52,7 @@ public interface TreeNode <T> {
     /**
      * @return user data stored in this <code>TreeNode</code>.
      */
-    T getData();
+    T getPath();
 
 
     /**
