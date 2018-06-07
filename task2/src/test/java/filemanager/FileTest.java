@@ -23,7 +23,6 @@ public class FileTest {
     public void changePathTest() {
         String sourcePath = "D:\\Ann\\newFolder";
         String destinationPath = "D:\\Ann\\testFolder";
-        String fileName = "newFolder";
 
         FileUtils.changePath(sourcePath, destinationPath);
     }
@@ -37,7 +36,6 @@ public class FileTest {
     @Test
     public void fillFileTreeTest() {
         String sourcePath = "D:\\Ann\\testFolder";
-        //String fileName = "testFolder";
         FileUtils.fillFileTree(new PathTreeNode(sourcePath));
     }
 }

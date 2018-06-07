@@ -4,9 +4,9 @@ import java.io.*;
 
 public class FileUtils {
     /**
-     *
+     * extract the name from given path
      * @param sourcePath
-     * @return
+     * @return file name extracted
      */
     static String getFileName(String sourcePath){
         String[] parts = sourcePath.split("\\\\");
@@ -37,14 +37,13 @@ public class FileUtils {
      * @param destinationPath
      */
     static void copyFile(String sourcePath, String destinationPath){
-        String sourceFile = getFileName(sourcePath);
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
             inputStream = new FileInputStream(sourcePath);
-            File newFile = new File(destinationPath+"\\"+sourceFile);
+            File newFile = new File(destinationPath);
             if (newFile.exists()){
-                newFile = new File(destinationPath+"\\copy."+sourceFile);
+                newFile = new File(destinationPath+".copy");
             }
             outputStream = new FileOutputStream(newFile);
             byte[] buffer = new byte[1024];
@@ -69,7 +68,6 @@ public class FileUtils {
      * do not work between different disks
      * @param sourcePath
      * @param destinationPath
-     *
      */
     static void changePath( String sourcePath, String destinationPath){
         String fileName = getFileName(sourcePath);
@@ -93,8 +91,12 @@ public class FileUtils {
         sourceFile.delete();
     }
 
-    static PathTreeNode fillFileTree(PathTreeNode root){ //File rootFile){
-        //PathTreeNode root = new PathTreeNode(rootFile.getPath());
+    /**
+     * fills the PathTree with paths od files and directories associated with root node
+     * @param root
+     * @return
+     */
+    static PathTreeNode fillFileTree(PathTreeNode root){
         File rootFile = new File(root.getFullPath());
         String[] files = rootFile.list();
         if (files!= null) {

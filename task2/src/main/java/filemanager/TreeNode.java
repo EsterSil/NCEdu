@@ -69,4 +69,13 @@ public interface TreeNode <T> {
      * @return the string representation of the path from root to this <code>TreeNode</code>.Path elements are separated by "\".
      */
     String getFullPath();
+    /**
+     * @return the string representation of the path to this <code>TreeNode</code> without root.Path elements are separated by "\".
+     */
+    String getSubPath();
+
+    /**
+      * @return a shallow copy of current node
+     */
+    TreeNode<T> copy();
 }

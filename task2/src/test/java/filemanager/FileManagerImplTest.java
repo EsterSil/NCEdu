@@ -17,10 +17,14 @@ public class FileManagerImplTest {
     @Test
     public void copyFilesTest(){
         FileManager fileManager = new FileManagerImpl();
-        fileManager.copyFiles("D:\\Ann\\testFolder", "D:\\Ann");
-        int i;
+        fileManager.copyFiles("D:\\tesst\\testA", "D:\\tesst\\testB");
     }
 
-
+    @Test
+    public void moveFilesTest(){
+        FileManager fileManager = new FileManagerImpl();
+        fileManager.moveFiles("D:\\tesst\\testA", "D:\\tesst\\testB");
+        int i;
+    }
 
 }
