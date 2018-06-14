@@ -5,6 +5,7 @@ import java.util.List;
 
 class TestClass implements Serializable, Cloneable {
     private int field;
+    private int[] ff;
     protected String[] strings;
     private static final Long serialNumber = 500L;
     public List array;
