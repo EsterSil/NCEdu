@@ -5,15 +5,34 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 
 public class ReflectorImpl implements Reflector {
-
+    /**
+     * inner parameter to work with
+     */
     private Class clazz = null;
 
-
+    /**
+     * method extract short name of method/class/etc. after the last dot in package
+     *
+     * @param fullName
+     * @return
+     */
     private String getNameByDelimiter(String fullName) {
         String delimiter = "\\.";
         String[] parts = fullName.split(delimiter);
         return parts[parts.length - 1];
     }
+
+    /**
+     * static method to print class
+     *
+     * @param clazz
+     */
+    static void print(Class clazz) {
+        ReflectorImpl ri = new ReflectorImpl();
+        ri.setClass(clazz);
+        ri.printClass();
+    }
+
 
     public String getPackage() {
         return clazz.getPackage().getName();
@@ -27,12 +46,6 @@ public class ReflectorImpl implements Reflector {
         return Modifier.toString(clazz.getModifiers());
     }
 
-
-    static void print(Class clazz) {
-        ReflectorImpl ri = new ReflectorImpl();
-        ri.setClass(clazz);
-        ri.printClass();
-    }
 
     public String getClassName() {
         return getNameByDelimiter(clazz.getName());
@@ -49,10 +62,6 @@ public class ReflectorImpl implements Reflector {
         return builder.toString();
     }
 
-    private void addIfArray(StringBuilder builder, Type type) {
-
-    }
-    @Override
     public String getFields() {
         Field[] fields = clazz.getDeclaredFields();
 
@@ -82,7 +91,6 @@ public class ReflectorImpl implements Reflector {
             }
             builder.append(getNameByDelimiter(f.getName()));
             builder.append("; \n");
-
         }
         return builder.toString();
     }
@@ -141,7 +149,7 @@ public class ReflectorImpl implements Reflector {
         return builder.toString();
     }
 
-    @Override
+
     public String getConstructors() {
         StringBuilder builder = new StringBuilder();
         Constructor[] constructors = clazz.getConstructors();
