@@ -1,15 +1,13 @@
-package tables;
+package tableraws;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 import javax.xml.bind.annotation.*;
 
 @XmlRootElement(name = "order")
-//@XmlAccessorType(XmlAccessType.FIELD)
+
 public class Order implements TableRaw {
 
     private int orderID;
@@ -21,6 +19,7 @@ public class Order implements TableRaw {
 
     public Order() {
     }
+
     @JsonGetter("id")
     @XmlAttribute(name = "id")
     public int getOrderID() {
@@ -30,6 +29,7 @@ public class Order implements TableRaw {
     public void setOrderID(int orderID) {
         this.orderID = orderID;
     }
+
     @JsonGetter("tour")
     @XmlElement(name = "tour")
     public Tour getTour() {
@@ -39,6 +39,7 @@ public class Order implements TableRaw {
     public void setTour(Tour tour) {
         this.tour = tour;
     }
+
     @JsonGetter("clients")
     @XmlElementWrapper(name = "clients")
     @XmlElement(name = "client")
@@ -49,6 +50,7 @@ public class Order implements TableRaw {
     public void setClient(Set<Client> client) {
         this.client = client;
     }
+
     @JsonGetter("employee")
     @XmlElement(name = "employee")
     public Employee getEmployee() {
@@ -80,6 +82,7 @@ public class Order implements TableRaw {
     public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
     }
+
     @JsonGetter("date")
     @XmlElement(name = "date")
     public Date getOrderDate() {
@@ -88,10 +91,9 @@ public class Order implements TableRaw {
 
     @Override
     public String toString() {
-        String result = null;
-        result = "Order:\n" + "id: " + getOrderID()+ ";\n"+
-                "manager: "+employee.getName()+" "+ employee.getLastName()+ ";\n"+
-                "tour: to "+ tour.getCountry()+ " costs: " + tour.getPrice()+ ";\n";
+        String result = "Order:\n" + "id: " + getOrderID() + ";\n" +
+                "manager: " + employee.getName() + " " + employee.getLastName() + ";\n" +
+                "tour: to " + tour.getCountry() + " costs: " + tour.getPrice() + ";\n";
         return result;
     }
 }

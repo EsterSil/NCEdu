@@ -1,4 +1,4 @@
-package tables;
+package tableraws;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 

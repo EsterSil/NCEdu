@@ -1,5 +1,6 @@
 package tables;
 
+import tableraws.Order;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -13,7 +14,7 @@ import java.util.Set;
 @XmlRootElement(namespace = "tables")
 public class OrderTable implements Table {
 
-    private Set<Order> orders = new HashSet<Order>();
+    private Set<Order> orders = new HashSet<>();
 
     @JsonGetter("orders")
     @XmlElementWrapper(name = "orders")

@@ -1,4 +1,4 @@
-package tables;
+package tableraws;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 
@@ -6,10 +6,8 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(namespace = "tables")
-//@XmlType(propOrder = { "tourID", "country", "town", "serviceType", "beginning", "duration", "price", "visa" })
 public class Tour implements TableRaw {
     @XmlAttribute(name = "id")
     private int tourID;

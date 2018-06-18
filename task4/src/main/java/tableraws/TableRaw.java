@@ -1,4 +1,4 @@
-package tables;
+package tableraws;
 
 public interface TableRaw<T> {
 

@@ -1,15 +1,14 @@
 package tables;
 
-import methods.JAXBToXML;
-import methods.JacksonToJSON;
+import tableraws.Client;
+import tableraws.Employee;
+import tableraws.Order;
+import tableraws.Tour;
+import methods.XMLConverter;
+import methods.JSONConverter;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.xml.bind.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.util.*;
 
 public class TablesTest {
@@ -28,6 +27,7 @@ public class TablesTest {
 
         Client client1 = new Client(1, "Ivan", "123456", new Date());
         clientsToMoscow.add(client1);
+
         Client client2 = new Client(2, "Vasily", "654321", new Date());
         Client client3 = new Client(3, "Maria", "456789", new Date());
         clientsToSpain.add(client2);
@@ -48,30 +48,30 @@ public class TablesTest {
 
     @Test
     public void serializeTableTest() {
-        JAXBToXML<OrderTable> jaxb = new JAXBToXML<>();
-        jaxb.serializeTable(OrderTable.class, table, tablesXMLPath);
+        XMLConverter<OrderTable> jaxb = new XMLConverter<>();
+        jaxb.serialize(OrderTable.class, table, tablesXMLPath);
         System.out.println();
 
     }
 
     @Test
     public void deserializeTableTest() {
-        JAXBToXML<OrderTable> jaxb = new JAXBToXML<>();
-        OrderTable resultTable = (OrderTable) jaxb.deserializeTable(tablesXMLPath);
+        XMLConverter<OrderTable> jaxb = new XMLConverter<>();
+        OrderTable resultTable = jaxb.deserialize(tablesXMLPath,OrderTable.class);
         Set<Order> newOrders = resultTable.getOrders();
         newOrders.forEach((order) -> System.out.println(order.toString()));
     }
 
     @Test
     public void serializeToJSONTest() {
-        JacksonToJSON<OrderTable> json = new JacksonToJSON<>();
-        json.serializeToJSON(table, tablesJSONPath);
+        JSONConverter<OrderTable> json = new JSONConverter<>();
+        json.serialize(OrderTable.class, table, tablesJSONPath);
     }
 
     @Test
     public void deserializeJSONTest() {
-        JacksonToJSON<OrderTable> json = new JacksonToJSON<>();
-        OrderTable resultTable = (OrderTable) json.deserializeJSON(tablesJSONPath, OrderTable.class);
+        JSONConverter<OrderTable> json = new JSONConverter<>();
+        OrderTable resultTable = (OrderTable) json.deserialize(tablesJSONPath, OrderTable.class);
         Set<Order> newOrders = resultTable.getOrders();
         newOrders.forEach((order) -> System.out.println(order.toString()));
     }

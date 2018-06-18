@@ -1,4 +1,4 @@
-package tables;
+package tableraws;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 
@@ -68,7 +68,6 @@ public class Employee implements TableRaw {
     }
 
     @JsonGetter
-
     @XmlElement
     public String getContacts() {
         return contacts;

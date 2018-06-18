@@ -3,20 +3,19 @@ package methods;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.sun.xml.internal.ws.server.ServerRtException;
 
 import java.io.File;
 import java.io.IOException;
 
-public class JacksonToJSON<T> {
+public class JSONConverter<T> implements ConvertingUtils<T> {
 
-    public String serializeToJSON(T obj, String path) {
+    public String serialize(Class<T> targetClass, T targetObject, String destinationDirectory) {
         ObjectMapper mapper = new ObjectMapper();
         String result = null;
-        mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
         try {
-            mapper.writeValue(new File(path),obj);
-            result = mapper.writeValueAsString(obj);
+            mapper.writeValue(new File(destinationDirectory), targetObject);
+            result = mapper.writeValueAsString(targetObject);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -24,10 +23,13 @@ public class JacksonToJSON<T> {
         }
         return result;
     }
-    public Object deserializeJSON(String path, Class<T> targetClass){
+
+
+    @Override
+    public T deserialize(String destinationDirectory, Class<T> targetClass) {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            return mapper.readValue(new File(path), targetClass);
+            return mapper.readValue(new File(destinationDirectory), targetClass);
         } catch (IOException e) {
             e.printStackTrace();
         }
