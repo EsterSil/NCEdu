@@ -1,17 +1,27 @@
 package filemanager;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
 
 public class FileManagerImplTest {
+    FileManager fileManager;
+    Console console;
+    @Before
+    public void init(){
+         fileManager = new FileManagerImpl();
+         console = new Console();
+    }
 
+    public static void main(String[] args){
+       Console.startScanner();
+    }
     @Test
     public void searchByPatternTest(){
-        FileManager fileManager = new FileManagerImpl();
         List<String> list  = fileManager.searchByPattern("D:\\Ann\\testFolder", ".*\\.txt");
-        Assert.assertTrue(true);
+        //Assert.assertTrue(true);
     }
 
     @Test
