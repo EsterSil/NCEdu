@@ -19,7 +19,7 @@ public class FileUtils {
      * @return final path to new  directory
      */
 
-    static String createDirectory(String destinationPath, String directoryName) {
+    static String createDirectory(String destinationPath, String directoryName) throws IllegalArgumentException {
         String resultPath = destinationPath+"\\"+directoryName;
         File newFile = new File(resultPath);
         if (!newFile.exists()) {
@@ -32,11 +32,11 @@ public class FileUtils {
     }
 
     /**
-     * create a copy of file in destination directory
+     * creates a copy of file in destination directory
      * @param sourcePath
      * @param destinationPath
      */
-    static void copyFile(String sourcePath, String destinationPath){
+    static void copyFile(String sourcePath, String destinationPath) throws  IllegalArgumentException{
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
@@ -52,26 +52,22 @@ public class FileUtils {
                 outputStream.write(buffer, 0, length);
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                inputStream.close();
-                outputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            throw new IllegalArgumentException();
         }
     }
 
     /**
-     * move file changing it's path within one disk
+     * moves file changing it's path within one disk
      * do not work between different disks
      * @param sourcePath
      * @param destinationPath
      */
-    static void changePath( String sourcePath, String destinationPath){
+    static void changePath( String sourcePath, String destinationPath) throws IllegalArgumentException {
         String fileName = getFileName(sourcePath);
         File sourceFile = new File(sourcePath);
+        if (!sourceFile.exists()){
+            throw new IllegalArgumentException();
+        }
         File destinationFile = new File(destinationPath+"\\"+fileName);
         if(!destinationFile.exists()){
             sourceFile.renameTo(destinationFile);
@@ -96,8 +92,11 @@ public class FileUtils {
      * @param root
      * @return
      */
-    static PathTreeNode fillFileTree(PathTreeNode root){
+    static PathTreeNode fillFileTree(PathTreeNode root) throws IllegalArgumentException {
         File rootFile = new File(root.getFullPath());
+        if (!rootFile.exists()){
+            throw new IllegalArgumentException();
+        }
         String[] files = rootFile.list();
         if (files!= null) {
             for (int i = 0; i < files.length; i++) {

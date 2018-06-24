@@ -134,7 +134,7 @@ public class PathTreeNode implements TreeNode<String> {
         while (currentNode.getParent() != null) {
             currentNode = currentNode.getParent();
             if (currentNode.getParent() != null) {
-                path = currentNode.getParent().getPath() + "\\" + path;
+                path = currentNode.getPath() + "\\" + path;
             }
 
         }
