@@ -3,11 +3,11 @@ package pingpong;
 
 import static java.lang.Thread.sleep;
 
-public class PongThread implements Runnable {
-    private PingThread ping;
+public class PongRunning implements Runnable {
+    private PingRunning ping;
 
 
-    public PongThread(PingThread ping) {
+    public PongRunning(PingRunning ping) {
         this.ping = ping;
     }
 
@@ -16,10 +16,9 @@ public class PongThread implements Runnable {
         int counter = 0;
         while (true) {
             try {
-                sleep(1000);
-                if (ping.getCounter() > counter) {
-                    ping.trunkCounter();
-                    counter = ping.getCounter();
+                sleep(0); ///for interruption
+                if (ping.getCounter().get() > counter) {
+                    counter = ping.getCounter().incrementAndGet();
                     System.out.println("Pong: " + counter);
                     if (counter >= 100){
                         System.out.println("Pong finished");

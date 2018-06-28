@@ -1,20 +1,22 @@
 package pingpong;
 
-import static java.lang.Thread.sleep;
+/**
+ * this class initialize both threads, ping and pong
+ * than main is waiting
+ */
 
 public class PingPongMain {
 
 
     public static void main(String[] args) {
-        PingThread pingRun  = new PingThread();
-        PongThread pongRun  = new PongThread(pingRun);
+        PingRunning pingRun = new PingRunning();
+        PongRunning pongRun = new PongRunning(pingRun);
         Thread ping = new Thread(pingRun);
         ping.start();
         Thread pong = new Thread(pongRun);
         pong.start();
-
-        while(true){
-                System.out.println("Main thread is waiting");
+        while (true) {
+            System.out.println("Main thread is waiting");
             try {
                 ping.join();
                 pong.join();
