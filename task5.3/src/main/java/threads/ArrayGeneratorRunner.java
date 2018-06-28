@@ -43,7 +43,7 @@ public class ArrayGeneratorRunner implements Runnable {
         long end2 = 0;
         if (arrayQueue.size()<capacity) {
             start = System.nanoTime();
-            list = generator.generateList(100, 100000);
+            list = generator.generateList(100000, 100000);
             end = System.nanoTime();
             arrayQueue.add(list);
             end2 = System.nanoTime();

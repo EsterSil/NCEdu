@@ -24,19 +24,17 @@ public class SorterRunner implements Runnable {
                 Thread.yield();
             }
             List<Integer> unsortedList = generator.removeList();
-            start = System.nanoTime();
-
-
-
-            IntegerQuickSort sorter = new IntegerQuickSort();
-            end = System.nanoTime();
-
-            System.out.println((end - start) +" sorting");
-
-            List<Integer> sortedList = sorter.sort(unsortedList);
-            System.out.println("Array successfully sorted at" );
-            sortedList.subList(0,10).forEach(System.out::print);
-            System.out.println();
+            if (unsortedList.size()!= 0) {
+                IntegerQuickSort sorter = new IntegerQuickSort();
+                System.out.println((end - start) + " sorting "+unsortedList.size() );
+                start = System.nanoTime();
+                List<Integer> sortedList = sorter.sort(unsortedList);
+                unsortedList = null;
+                end = System.nanoTime();
+                System.out.println("Array successfully sorted at");
+                sortedList.subList(0, 10).forEach(System.out::print);
+                System.out.println();
+            }
             try {
                 sleep(1000);
             } catch (InterruptedException e) {
