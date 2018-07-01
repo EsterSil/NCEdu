@@ -1,6 +1,6 @@
 
 public class RepeatSearchAlgorithm {
-    
+
     /**
      * method searches for the repetitive number in the input array
      * @param input n+1 size array of numbers, should contains integers from 1 to n
