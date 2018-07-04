@@ -16,7 +16,7 @@ public class MultiThreadSortedMain {
         generatorThread.start();
         Thread[] sorterThreads = new Thread[threadNumber];
         for (int i = 0; i < threadNumber; i++) {
-            sorterThreads[i] = new Thread(new SorterRunner(runner, i+1));
+            sorterThreads[i] = new Thread(new SorterRunner(runner));
             sorterThreads[i].start();
         }
         try {
