@@ -1,9 +1,9 @@
 package threads;
 
+import intdata.IntegerDataGenerator;
+
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Queue;
-import intdata.IntegerDataGenerator;
 
 import static java.lang.Thread.sleep;
 
