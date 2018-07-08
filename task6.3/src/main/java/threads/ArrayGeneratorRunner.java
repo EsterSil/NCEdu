@@ -1,19 +1,28 @@
 package threads;
 
+import intdata.IntegerDataGenerator;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
-import intdata.IntegerDataGenerator;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import static java.lang.Thread.sleep;
 
-public class ArrayGeneratorRunner implements Runnable {
-    private MyBlockingQueue<List<Integer>> arrayQueue;
-    private int capacity;
+/**
+ * this class is a task? implementing the
+ */
+public class
+ArrayGeneratorRunner implements Runnable {
+    private Queue<List<Integer>> arrayQueue;
+    private final int capacity;
+    private final int duration;
 
-    public ArrayGeneratorRunner(int capacity) {
-        this.arrayQueue = new MyBlockingQueue<>(capacity);
+    private boolean isInterrupted = false;
+    public ArrayGeneratorRunner(int capacity, int duration) {
+        this.arrayQueue = new LinkedBlockingQueue<>(capacity);
         this.capacity = capacity;
+        this.duration = duration;
     }
 
     public boolean queueIsEmpty(){
@@ -55,13 +64,14 @@ public class ArrayGeneratorRunner implements Runnable {
     @Override
     public  void run() {
         System.out.println("Main is started");
-        while (true){
+        while (!isInterrupted){
             if (!generateArray()) {
                 try {
-                    sleep(1000);
+                    sleep(duration*1000);
+                    System.out.println("Main awake");
                 } catch (InterruptedException e) {
+                    isInterrupted = true;
                     System.out.println(" Generator is finished");
-                    break;
                 }
             }
         }

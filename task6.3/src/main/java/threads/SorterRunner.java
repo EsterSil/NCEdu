@@ -9,7 +9,8 @@ import static java.lang.Thread.sleep;
 public class SorterRunner implements Runnable {
 
     private final ArrayGeneratorRunner generator;
-    private int number;
+    private final int number;
+    private boolean isInterrupted = false;
 
     public SorterRunner(ArrayGeneratorRunner generator , int number) {
         this.generator = generator;
@@ -21,7 +22,7 @@ public class SorterRunner implements Runnable {
         System.out.println("Sorter is started");
         long start = 0;
         long end = 0;
-        while(true) {
+        while(!isInterrupted) {
             while (generator.queueIsEmpty()) {
                 Thread.yield();
             }
@@ -35,9 +36,9 @@ public class SorterRunner implements Runnable {
                 System.out.println("Array successfully sorted at thread "+ number);
             }
             try {
-                sleep(0);
+                sleep(1000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                isInterrupted = true;
             }
         }
     }
