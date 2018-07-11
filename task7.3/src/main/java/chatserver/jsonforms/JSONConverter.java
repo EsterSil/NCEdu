@@ -1,5 +1,6 @@
-package methods;
+package chatserver.jsonforms;
 
+import chatserver.jsonforms.ConvertingUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -7,29 +8,26 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.File;
 import java.io.IOException;
 
-public class JSONConverter<T> implements ConvertingUtils<T> {
+public class JSONConverter {
 
-    public String serialize(Class<T> targetClass, T targetObject, String destinationDirectory) {
+    public String serialize( ResponseForm targetObject) {
         ObjectMapper mapper = new ObjectMapper();
         String result = null;
         //mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
         try {
-            mapper.writeValue(new File(destinationDirectory), targetObject);
             result = mapper.writeValueAsString(targetObject);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
             e.printStackTrace();
         }
         return result;
     }
 
-
-    @Override
-    public T deserialize(String destinationDirectory, Class<T> targetClass) {
+    public RequestForm deserialize(String destinationDirectory, Class<T> targetClass) {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.readValue()
         try {
             return mapper.readValue(new File(destinationDirectory), targetClass);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
