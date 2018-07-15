@@ -8,6 +8,10 @@ public class ClientData {
     int sessionID;
 
 
+    public SocketChannel getChannel() {
+        return channel;
+    }
+
     SocketChannel channel;
 
     public ClientData() {

@@ -1,4 +1,4 @@
-package chatserver.jsonforms;
+package jsonforms;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 

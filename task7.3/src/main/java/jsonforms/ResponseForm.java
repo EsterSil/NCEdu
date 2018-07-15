@@ -1,9 +1,10 @@
-package chatserver.jsonforms;
+package jsonforms;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonGetter;
 
 public class ResponseForm {
+    private String to;
     private String message;
     private String from;
     private boolean isPrivate;
@@ -11,7 +12,13 @@ public class ResponseForm {
     public ResponseForm() {
     }
 
-    public ResponseForm(String message, String from, boolean isPrivate) {
+    public String getTo() {
+        return to;
+    }
+
+    public ResponseForm(String message, String from, boolean isPrivate, String to) {
+        this.to = to;
+
         this.message = message;
         this.from = from;
         this.isPrivate = isPrivate;
@@ -42,6 +49,18 @@ public class ResponseForm {
         isPrivate = aPrivate;
     }
 
+    @Override
+    public String toString(){
+        StringBuilder builder = new StringBuilder();
+        if( isPrivate){
+            builder.append("[" +this.from+ "]: ");
+        } else {
+            builder.append(this.from+ ": ");
+        }
+
+        builder.append(this.message);
+        return builder.toString();
+    }
 
 
 }

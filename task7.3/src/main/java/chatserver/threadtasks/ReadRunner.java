@@ -2,14 +2,12 @@ package chatserver.threadtasks;
 
 import chatserver.ChatServer;
 import chatserver.ClientData;
-import chatserver.jsonforms.RequestForm;
-import chatserver.jsonforms.ResponseForm;
+import jsonforms.RequestForm;
+import jsonforms.ResponseForm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
@@ -29,13 +27,12 @@ public class ReadRunner implements Runnable {
         client.read(buffer);
         String json = new String(buffer.array());
         ObjectMapper mapper = new ObjectMapper();
-
-
         RequestForm request = new ObjectMapper().readerFor(RequestForm.class).readValue(json);
         if(request.getMessage().equals("")){
             server.addNewSession( new ClientData(request.getNickName(), client));
-            ResponseForm response = new ResponseForm("Register",null, true );
-            server.getWriteBuffer().put(mapper.writeValueAsString(response).getBytes());
+            ResponseForm response = new ResponseForm("OK",null, true, request.getNickName() );
+            server.getMessageQueue().add(response);
+            //server.getWriteBuffer().put(mapper.writeValueAsString(response).getBytes());
         }
     }
 
