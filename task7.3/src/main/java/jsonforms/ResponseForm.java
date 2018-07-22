@@ -18,12 +18,11 @@ public class ResponseForm {
 
     public ResponseForm(String message, String from, boolean isPrivate, String to) {
         this.to = to;
-
         this.message = message;
         this.from = from;
         this.isPrivate = isPrivate;
     }
-    @JsonAnyGetter
+    @JsonGetter
     public String getMessage() {
 
         return message;
@@ -32,7 +31,7 @@ public class ResponseForm {
     public void setMessage(String message) {
         this.message = message;
     }
-
+    @JsonGetter
     public String getFrom() {
         return from;
     }

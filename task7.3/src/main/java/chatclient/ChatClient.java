@@ -1,6 +1,8 @@
 package chatclient;
 
-import chatserver.threadtasks.WriteRunner;
+import chatclient.threadtasks.ClientConsole;
+import chatclient.threadtasks.ClientReader;
+import chatclient.threadtasks.ClientWriter;
 import jsonforms.RequestForm;
 
 import java.io.IOException;
@@ -22,8 +24,14 @@ public class ChatClient {
     public ChatClient() {
         messageQueue = new LinkedBlockingQueue<>();
         try {
-            client = SocketChannel.open(new InetSocketAddress("localhost", 8080));
-        } catch (IOException e) {
+            client = SocketChannel.open();
+            client.configureBlocking(false);
+            client.connect( new InetSocketAddress("localhost", 8080));
+            while(!client.finishConnect()){
+                Thread.sleep(500);
+            }
+            //System.out.println("main: sock connected ");
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         writeBuffer = ByteBuffer.allocate(2048);
@@ -32,9 +40,11 @@ public class ChatClient {
 
     public void start(){
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Welcome to chat! Enter your nickname ");
+        System.out.println("Welcome to chat! Enter your nickname: ");
         nickName = scanner.next();
+        messageQueue.add(new RequestForm(nickName, "", null));
 
+        System.out.println("______________________________________________________________");
         Thread writeThread = new Thread(new ClientWriter(this));
         Thread readThread = new Thread(new ClientReader(this));
         Thread consoleThread = new Thread(new ClientConsole(this));
@@ -69,7 +79,5 @@ public class ChatClient {
     public ByteBuffer getReadBuffer() {
         return readBuffer;
     }
-
-
 
 }

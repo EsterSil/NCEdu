@@ -17,34 +17,31 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChatServer {
 
-    private static final String POISON_PILL = "POISON_PILL";
-
     private ConcurrentMap<String, ClientData> sessions;
     private BlockingQueue<ResponseForm> messageQueue;
 
-    private  ByteBuffer readBuffer;
-    private  ByteBuffer writeBuffer;
+    private BlockingQueue<SocketChannel> unhandledConnectionsToRead;
+    private BlockingQueue<SocketChannel> unhandledConnectionsToWrite;
+    private BlockingQueue<SocketChannel> deleteToWrite;
 
 
-    private AtomicInteger bufferSize;
-    private AtomicInteger connectionNumber;
 
+    public BlockingQueue<SocketChannel> getUnhandledConnectionsToRead() {
+        return unhandledConnectionsToRead;
+    }
+
+    public BlockingQueue<SocketChannel> getUnhandledConnectionsToWrite() {
+        return unhandledConnectionsToWrite;
+    }
 
     public BlockingQueue<ResponseForm> getMessageQueue() {
         return messageQueue;
     }
 
-    public AtomicInteger getConnectionNumber() {
-        return connectionNumber;
-
-    }
-
     public ChatServer() {
         this.sessions = new ConcurrentHashMap<>();
-        readBuffer = ByteBuffer.allocate(2048);
-        writeBuffer = ByteBuffer.allocate(2048);
-        bufferSize = new AtomicInteger(0);
-        connectionNumber = new AtomicInteger(0);
+        unhandledConnectionsToRead = new LinkedBlockingQueue<>();
+        unhandledConnectionsToWrite = new LinkedBlockingQueue<>();
         messageQueue = new LinkedBlockingQueue<>();
     }
 
@@ -52,52 +49,30 @@ public class ChatServer {
         return sessions;
     }
 
-    public ByteBuffer getReadBuffer() {
-        return readBuffer;
-    }
-
-    public ByteBuffer getWriteBuffer() {
-        return writeBuffer;
-    }
-
-    public AtomicInteger getBufferSize() {
-        return bufferSize;
-    }
-
-    public void addNewSession(ClientData data) {
-        sessions.put(data.getName(), data);
-    }
-
-
-
-    public void start(){
-        Selector selector = null;
-        ServerSocketChannel serverSocket = null;
-
-        try {
-            selector = Selector.open();
-            serverSocket = ServerSocketChannel.open();
-            serverSocket.bind(new InetSocketAddress("localhost", 8080));
-            serverSocket.configureBlocking(false);
-            serverSocket.register(selector, SelectionKey.OP_ACCEPT);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+    public boolean addNewSession(ClientData data) {
+        if (sessions.containsKey(data.getName())){
+            return false;
         }
+        sessions.put(data.getName(), data);
+        return true;
+    }
 
-        Thread acceptorThread = new Thread(new AcceptorRunner(selector, this));
-        Thread readerThread = new Thread (new ReadRunner(selector, this));
-        Thread writeThread = new Thread (new WriteRunner(selector, this));
+
+    public void start() {
+        System.out.println(" SERVER MAIN ============ is started");
+        Thread acceptorThread = new Thread(new AcceptorRunner(this));
+        Thread readerThread = new Thread(new ReadRunner(this));
+        Thread writeThread = new Thread(new WriteRunner(this));
         acceptorThread.start();
         readerThread.start();
         writeThread.start();
-
-        try {
-            acceptorThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while (true) {
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-
 
     }
 }
