@@ -4,9 +4,13 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonGetter;
 
 /**
- * this class provide an object for json serialisation
+ * this class provide a common object for json serialisation with all required setters and getters
+ *
+ *
  */
 public class RequestForm {
+
+
     String nickName;
     String message;
     String to;
@@ -18,8 +22,9 @@ public class RequestForm {
     }
 
     public RequestForm() {
-
     }
+
+
     @JsonGetter
     public String getNickName() {
 

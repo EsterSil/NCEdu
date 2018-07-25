@@ -16,16 +16,42 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+/**
+ * this runnable class provides a task for server's writing thread
+ */
 public class WriteRunner implements Runnable {
 
+    /**
+     * local selector to reveal clients' sockets ready to be written to
+     */
     private Selector writeSelector = null;
+    /**
+     * central thread-keeping class
+     */
     private ChatServer server = null;
+
+    /**
+     * json mapper object
+     */
     private ObjectMapper mapper;
-    private boolean isInterrupted = false;
+
+    /**
+     * buffer to write to clients sockets
+     */
     private ByteBuffer writeBuffer;
+    /**
+     * flag to stop the process loop in case of exceptions
+     */
+    private boolean isInterrupted = false;
+
+    /**
+     * public runner constructor, initializes all necessary fields and saves the object of thread-parent class
+     *
+     * @param server parent thread's object
+     */
     public WriteRunner(ChatServer server) {
         try {
-            this.writeSelector = Selector.open();// server.getSelector();
+            this.writeSelector = Selector.open();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -34,6 +60,11 @@ public class WriteRunner implements Runnable {
         mapper = new ObjectMapper();
     }
 
+    /**
+     * inner method updates local selector with new registered connection
+     *
+     * @throws ClosedChannelException
+     */
     private void selectorUpDate() throws ClosedChannelException {
         while (server.getUnhandledConnectionsToWrite().size() > 0) {
             SocketChannel channel = server.getUnhandledConnectionsToWrite().remove();
@@ -41,91 +72,106 @@ public class WriteRunner implements Runnable {
         }
     }
 
-    private void privateWrite(ResponseForm form, Set<SelectionKey> selectedKeys) throws IOException, NoSuchElementException {
-        System.out.println(" SERVER WRITER>>>>>>>>>>>>>>>>> private is on ");
-        System.out.println(" SERVER WRITER>>>>>>>>>>>>>>>>> private to " + form.getTo());
-        System.out.println(" SERVER WRITER>>>>>>>>>>>>>>>>> private size " + server.getSessions().size());
-        ClientData data = server.getSessions().get(form.getTo());
-        if (data != null) {
-            System.out.println(" SERVER WRITER>>>>>>>>>>>>>>>>> private data for " + data.getName());
-            SocketChannel client = data.getChannel();
-            //int i = selector.selectNow();
-            //Set<SelectionKey> selectedKeys = selector.selectedKeys();
-            System.out.println(" SERVER WRITER>>>>>>>>>>>>>>>>> private selector  " +  " " + selectedKeys.size());
-            if (selectedKeys.contains(client.keyFor(writeSelector))) {
-                System.out.println(" SERVER WRITER>>>>>>>>>>>>>>>>> private json  " + mapper.writeValueAsString(form));
+    /**
+     * inner method performing target write to client socked.
+     * before write method check if target channel is write ready by using writeSelector
+     * if target client is absent in current session method write a error message to sender
+     *
+     * @param form         response form created by reading thread
+     * @param selectedKeys result of selection in writeSelector with OP_WRITE option
+     *                     used to check if client's socket is write ready
+     * @throws NoSuchElementException throws if map do
+     */
+    private void privateWrite(ResponseForm form, Set<SelectionKey> selectedKeys) throws NoSuchElementException {
+
+        SocketChannel client = form.getTo();
+        if (selectedKeys.contains(client.keyFor(writeSelector))) {
+            try {
                 writeBuffer.put(mapper.writeValueAsString(form).getBytes());
-                writeBuffer.flip();
-                client.write(writeBuffer);
-                writeBuffer.clear();
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
             }
-        } else {
-            System.out.println(" data null");
+            writeBuffer.flip();
+            try {
+                client.write(writeBuffer);
+            } catch (IOException e) {
+                client.keyFor(writeSelector).cancel();
+                System.out.print(e.getCause().toString());
+            }
+            writeBuffer.clear();
         }
+
     }
 
-    private void publicWrite(ResponseForm form, Set<SelectionKey> selectedKeys) throws IOException {
-        System.out.println(" SERVER WRITER>>>>>>>>>>>>>>>>>  public");
-        try {
-            writeBuffer.put(mapper.writeValueAsString(form).getBytes());
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+    /**
+     * inner method performing global write to all available clients
+     *
+     * @param form
+     * @param selectedKeys
+     * @throws IOException
+     */
+    private void publicWrite(ResponseForm form, Set<SelectionKey> selectedKeys) {
         Iterator<SelectionKey> iterator = selectedKeys.iterator();
-        writeBuffer.flip();
         while (iterator.hasNext()) {
             SelectionKey key = iterator.next();
             SocketChannel client = (SocketChannel) key.channel();
-            client.write(writeBuffer);
+            try {
+                writeBuffer.put(mapper.writeValueAsString(form).getBytes());
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            writeBuffer.flip();
+            try {
+                client.write(writeBuffer);
+            } catch (IOException e) {
+                server.deleteSession(client);
+                key.cancel();
+                //e.printStackTrace();
+            }
             iterator.remove();
+            writeBuffer.clear();
         }
-        writeBuffer.clear();
     }
 
+    /**
+     * overridden method to be called in that separately executing
+     * thread.
+     */
     @Override
     public void run() {
-        System.out.println(" SERVER WRITER>>>>>>>>>>>>>>>>> is started");
+        System.out.println("=========== SERVER WRITER is started");
+        ResponseForm currentForm = null;
         while (!isInterrupted) {
             if (server.getMessageQueue().size() > 0) {
-                System.out.println(" SERVER WRITER>>>>>>>>>>>>>>>>> get mess");
-                ResponseForm currentForm = server.getMessageQueue().remove();
+                currentForm = server.getMessageQueue().remove();
                 if (currentForm != null) {
                     try {
                         selectorUpDate();
                     } catch (ClosedChannelException e) {
+                        isInterrupted = true;
                         e.printStackTrace();
                     }
-
                     try {
-                        writeSelector.select();
+                        writeSelector.selectNow();
                     } catch (IOException e) {
                         isInterrupted = true;
                         e.printStackTrace();
                     }
-
                     Set<SelectionKey> selectedKeys = writeSelector.selectedKeys();
-                    System.out.println(" SERVER WRITER>>>>>>>>>>>>>>>>> selector " + selectedKeys.size());
                     if (currentForm.isPrivate()) {
-
-                        try {
-                            privateWrite(currentForm, selectedKeys);
-                        } catch (IOException e) {
-                            isInterrupted = true;
-                            e.printStackTrace();
-                        }
+                        privateWrite(currentForm, selectedKeys);
                     } else {
-                        try {
-                            publicWrite(currentForm, selectedKeys);
-                        } catch (IOException e) {
-                            isInterrupted = true;
-                            e.printStackTrace();
-                        }
+                        publicWrite(currentForm, selectedKeys);
                     }
                 }
             } else {
-                Thread.yield();
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    isInterrupted = true;
+                    e.printStackTrace();
+                }
             }
-
         }
     }
 }

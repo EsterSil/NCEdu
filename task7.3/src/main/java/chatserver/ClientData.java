@@ -2,57 +2,30 @@ package chatserver;
 
 import java.nio.channels.SocketChannel;
 
+/**
+ * class-container with related client data
+ * have only necessary getters and setters
+ * name - client nickname
+ * channel - socket associated with this client
+ */
+
 public class ClientData {
-    int clientID;
+
     String name;
-    int sessionID;
+    SocketChannel channel;
 
 
     public SocketChannel getChannel() {
         return channel;
     }
 
-    SocketChannel channel;
-
-    public ClientData() {
-
-    }
-
-
     public ClientData(String name, SocketChannel channel) {
         this.name = name;
         this.channel = channel;
     }
 
-    public ClientData(int clientID, String name, int sessionID, SocketChannel channel) {
-
-        this.clientID = clientID;
-        this.name = name;
-        this.sessionID = sessionID;
-        this.channel = channel;
-    }
-
-    public int getClientID() {
-        return clientID;
-    }
-
-    public void setClientID(int clientID) {
-        this.clientID = clientID;
-    }
-
     public String getName() {
         return name;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getSessionID() {
-        return sessionID;
-    }
-
-    public void setSessionID(int sessionID) {
-        this.sessionID = sessionID;
-    }
 }
+
